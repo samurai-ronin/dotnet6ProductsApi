@@ -11,6 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<ProductContext>(opt => opt.UseInMemoryDatabase("db"));
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddTransient<ICategoryRepository,CategoryRepository>();
+builder.Services.AddTransient<IProductRepository,ProductRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

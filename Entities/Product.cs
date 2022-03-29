@@ -12,6 +12,10 @@ public class Product
     public Collection<Size>? Sizes { get; private set; }
     public Guid CategoryId { get; private set; }
     public Category? Category { get; private set; }
+    public Product()
+    {
+        Id = new Guid();
+    }
     public Product(string? name, string? description, decimal price, string? image, string? color, Guid categoryId)
     {
         Id = new Guid();

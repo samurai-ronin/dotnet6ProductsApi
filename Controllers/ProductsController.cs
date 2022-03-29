@@ -1,5 +1,7 @@
+using System.Collections.ObjectModel;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ProductsApi.Dtos;
 using ProductsApi.Entities;
 using ProductsApi.Interfaces.Repositories;
@@ -40,6 +42,45 @@ public class ProductsController:ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex.Message);
+            response.message = ex.Message;
+            response.success = false;
+            return response;
+        }
+    }
+
+    [HttpGet()]
+    public async Task<ActionResult<ApiResponse>> GetAll()
+    {
+        ApiResponse response = new();
+        try
+        {
+            response.data = _mapper.Map<Collection<ProductOutputModel>>(await _repository.GetAll().Include(x=>x.Category).Include(x=>x.Sizes).ToListAsync());
+            return  Ok(response);
+        } 
+        catch (Exception ex)
+        {
+            response.message = ex.Message;
+            response.success = false;
+            return response;
+        }
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ApiResponse>> GetById(Guid id)
+    {
+        ApiResponse response = new();
+        try
+        {
+            var product = _mapper.Map<ProductOutputModel>(await _repository.GetAll().Include(x=>x.Category).Include(x=>x.Sizes).FirstOrDefaultAsync(x=>x.Id==id));
+            if (product is null)
+            {
+                return NotFound();
+            }
+            response.data = product;
+            return  Ok(response);
+        }
+        catch (Exception ex)
+        {
             response.message = ex.Message;
             response.success = false;
             return response;

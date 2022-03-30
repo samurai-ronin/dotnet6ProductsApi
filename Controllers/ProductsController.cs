@@ -13,7 +13,7 @@ namespace ProductsApi.Controllers;
 [Route("api/v1/[Controller]")]
 public class ProductsController:ControllerBase
 {
-        private readonly IProductRepository _repository;
+    private readonly IProductRepository _repository;
     private readonly IMapper _mapper;
     private readonly ILogger<ProductsController> _logger;
 
@@ -55,6 +55,27 @@ public class ProductsController:ControllerBase
         try
         {
             response.data = _mapper.Map<Collection<ProductOutputModel>>(await _repository.GetAll().Include(x=>x.Category).Include(x=>x.Sizes).ToListAsync());
+            return  Ok(response);
+        } 
+        catch (Exception ex)
+        {
+            response.message = ex.Message;
+            response.success = false;
+            return response;
+        }
+    }
+
+    [HttpGet("category/{categoryId}")]
+    public async Task<ActionResult<ApiResponse>> GetAllByCategoryId(Guid categoryId)
+    {
+        ApiResponse response = new();
+        try
+        {
+            response.data = _mapper.Map<Collection<ProductOutputModel>>(await _repository.GetAll()
+            .Where(x=>x.CategoryId==categoryId)
+            .Include(x=>x.Category)
+            .Include(x=>x.Sizes)
+            .ToListAsync());
             return  Ok(response);
         } 
         catch (Exception ex)

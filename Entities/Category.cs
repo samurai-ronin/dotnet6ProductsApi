@@ -12,4 +12,9 @@ public class Category
         Id = new Guid();
         Name = name;
     }
+
+    public void Edit(string? name)
+    {
+        Name = name;
+    }
 }

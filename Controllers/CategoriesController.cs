@@ -46,4 +46,29 @@ public class CategoriesController:ControllerBase
             return response;
         }
     }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<ApiResponse>> Edit(Guid id,[FromBody]CategoryInputModel categoryInputModel)
+    {
+        ApiResponse response = new();
+        try
+        {
+            Category? category = await _repository.GetById(id);
+            if (category is null)
+            {
+                return NotFound();
+            }
+            await _repository.Update(category);
+            response.message = "Category updated";
+            _logger.LogInformation(response.message);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+            response.message = ex.Message;
+            response.success = false;
+            return response;
+        }
+    }
 }
